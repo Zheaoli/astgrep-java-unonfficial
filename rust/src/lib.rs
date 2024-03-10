@@ -37,14 +37,14 @@ pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Root_disposeInterna
 pub extern "system" fn Java_io_github_zheaoli_astgrep_Root_constructor(
     mut env: JNIEnv,
     _: JClass,
-    sourceCode: JString,
+    code: JString,
     language: JString,
 ) -> jlong {
     let lang: SupportLang = utils::jstring_to_string(&mut env, &language)
         .unwrap()
         .parse()
         .unwrap();
-    let inner = lang.ast_grep(utils::jstring_to_string(&mut env, &language).unwrap());
+    let inner = lang.ast_grep(utils::jstring_to_string(&mut env, &code).unwrap());
     let result = Root {
         inner,
         filename: "anonymous".into(),
