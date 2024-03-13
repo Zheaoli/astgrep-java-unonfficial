@@ -6,6 +6,10 @@ import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Rule;
 import io.questdb.jar.jni.JarJniLoader;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
 public class Node extends NativeObject {
     static {
         JarJniLoader.loadLib(Node.class, "rust/libs", "ast_grep_java_unofficial");
@@ -71,6 +75,18 @@ public class Node extends NativeObject {
         return find(nativeHandle, coreJson);
     }
 
+    public Node getMatch(String meta) {
+        return getMatch(nativeHandle, meta);
+    }
+
+    public List<Node> getMultipleMatches(String meta){
+        return Arrays.asList(getMultipleMatches(nativeHandle, meta));
+    }
+
+    public String getTransformed(String meta)  {
+        return getTransformed(nativeHandle, meta);
+    }
+
 
     @Override
     protected native void disposeInternal(long handle);
@@ -97,4 +113,10 @@ public class Node extends NativeObject {
     protected static native boolean follows(long handle, String rule);
 
     protected static native Node find(long handle, String core);
+
+    protected static native Node getMatch(long handle, String meta);
+
+    protected static native Node[] getMultipleMatches(long handle, String meta);
+
+    protected static native String getTransformed(long handle, String meta);
 }

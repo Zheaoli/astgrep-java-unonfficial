@@ -7,6 +7,7 @@ import io.github.zheaoli.astgrep.arguments.Rule;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Objects;
 
 public class SimpleTest {
@@ -178,6 +179,7 @@ public class SimpleTest {
         assert newNode.has(rule2);
         assert !newNode.has(rule3);
     }
+
     @Test
     public void testPrecedes() throws Exception {
         String sourceCode = "function test() {\n" +
@@ -223,5 +225,43 @@ public class SimpleTest {
         rule2.setPattern("let c = 789\n");
         assert newNode.follows(rule1);
         assert !newNode.follows(rule2);
+    }
+
+    @Test
+    public void testGetMatch() throws Exception {
+        String sourceCode = "function test() {\n" +
+                "  let a = 123\n" +
+                "  let b = 456\n" +
+                "  let c = 789\n" +
+                "}";
+        Node root = Root.of(sourceCode, "javascript").root();
+        Core findArgument = new Core();
+        Rule rule = new Rule();
+        rule.setPattern("let $A = $B\n");
+        findArgument.setRule(rule);
+        Node newNode = root.find(findArgument);
+        assert newNode != null;
+        Node matchNode = newNode.getMatch("A");
+        assert matchNode != null;
+        assert matchNode.text().equals("a");
+    }
+
+    @Test
+    public void testGetMultiMatch() throws Exception {
+        String sourceCode = "function test() {\n" +
+                "  let a = 123\n" +
+                "  let b = 456\n" +
+                "  let c = 789\n" +
+                "}";
+        Node root = Root.of(sourceCode, "javascript").root();
+        Core findArgument = new Core();
+        Rule rule = new Rule();
+        rule.setPattern("function test() { $$$STMT }");
+        findArgument.setRule(rule);
+        Node newNode = root.find(findArgument);
+        assert newNode != null;
+        List<Node> matchNode = newNode.getMultipleMatches("STMT");
+        assert matchNode != null;
+        assert matchNode.size() == 3;
     }
 }

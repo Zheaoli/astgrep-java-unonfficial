@@ -11,9 +11,8 @@ use jni::JNIEnv;
 
 use jni::errors::Error;
 
-
 pub(crate) fn jstring_to_string(env: &mut JNIEnv, s: &JString) -> Result<String, Error> {
-    let res =  env.get_string(s)? ;
+    let res = env.get_string(s)?;
     Ok(res.into())
 }
 

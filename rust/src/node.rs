@@ -13,6 +13,7 @@ use jni::objects::JValueOwned;
 use jni::sys::jboolean;
 use jni::sys::jlong;
 use jni::sys::jobject;
+use jni::sys::jobjectArray;
 use jni::sys::jsize;
 use jni::sys::jstring;
 use jni::JNIEnv;
@@ -184,16 +185,108 @@ pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Node_find(
             "(J)V",
             &[JValue::Long(native_node)],
         )
+        .unwrap()
+        .into_raw()
+    } else {
+        JObject::null().into_raw()
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Node_getMatch(
+    mut env: JNIEnv,
+    _: JClass,
+    node: *mut Node,
+    meta: JString,
+) -> jobject {
+    let node = &mut *node;
+    let metadata = utils::jstring_to_string(&mut env, &meta).unwrap().clone();
+    let new_node = node
+        .inner
+        .get_env()
+        .get_match(metadata.as_str())
+        .cloned()
+        .map(|n| Node {
+            inner: NodeMatch::from(n),
+            root: node.root.clone(),
+        });
+    if let Some(new_node) = new_node {
+        let native_node = Box::into_raw(Box::new(new_node)) as jlong;
+        env.new_object(
+            "io/github/zheaoli/astgrep/Node",
+            "(J)V",
+            &[JValue::Long(native_node)],
+        )
+        .unwrap()
+        .into_raw()
+    } else {
+        JObject::null().into_raw()
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Node_getMultipleMatches(
+    mut env: JNIEnv,
+    _: JClass,
+    node: *mut Node,
+    meta: JString,
+) -> jobjectArray {
+    let node = &mut *node;
+    let metadata = utils::jstring_to_string(&mut env, &meta).unwrap().clone();
+    let nodes: Vec<Node> = node
+        .inner
+        .get_env()
+        .get_multiple_matches(&metadata)
+        .into_iter()
+        .map(|n| Node {
+            inner: NodeMatch::from(n),
+            root: node.root.clone(),
+        })
+        .collect();
+    let array_object = env
+        .new_object_array(
+            nodes.len() as jsize,
+            "io/github/zheaoli/astgrep/Node",
+            JObject::null(),
+        )
+        .unwrap();
+    for (i, node) in nodes.iter().enumerate() {
+        let native_node = Box::into_raw(Box::new(node)) as jlong;
+        let value = env
+            .new_object(
+                "io/github/zheaoli/astgrep/Node",
+                "(J)V",
+                &[JValue::Long(native_node)],
+            )
+            .unwrap();
+        env.set_object_array_element(&array_object, i as jsize, value)
+            .unwrap();
+    }
+    array_object.into_raw()
+}
+
+#[no_mangle]
+pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Node_getTransformed(
+    mut env: JNIEnv,
+    _: JClass,
+    node: *mut Node,
+    meta: JString,
+) -> jobject {
+    let node = &mut *node;
+    let metadata = utils::jstring_to_string(&mut env, &meta).unwrap().clone();
+    let result = node
+        .inner
+        .get_env()
+        .get_transformed(&metadata)
+        .map(|n| String::from_utf8_lossy(n).to_string());
+    if let Some(new_node) = result {
+        utils::string_to_jstring(&mut env, Some(new_node.as_str()))
             .unwrap()
             .into_raw()
     } else {
         JObject::null().into_raw()
     }
 }
-
-
-
-
 
 fn get_matcher_from_rule(lang: &SupportLang, rule: String) -> Result<RuleCore<SupportLang>, Error> {
     let rule: SerializableRule = serde_json::from_str(&rule)?;
