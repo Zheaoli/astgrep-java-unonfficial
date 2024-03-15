@@ -1,5 +1,8 @@
 package io.github.zheaoli.astgrep;
 
+import lombok.Data;
+
+@Data
 public abstract class NativeObject implements AutoCloseable {
     protected final long nativeHandle;
 

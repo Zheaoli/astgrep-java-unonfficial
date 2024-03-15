@@ -27,7 +27,7 @@
 
   <groupId>io.github.zheaoli</groupId>
   <artifactId>astgrep-java-unonfficial</artifactId>
-  <version>0.1.0</version>
+  <version>1.14.514</version>
   <packaging>jar</packaging>
 
   <name>AstGrep™</name>

@@ -5,6 +5,7 @@ import io.github.zheaoli.astgrep.Root;
 import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Rule;
 
+import io.github.zheaoli.astgrep.position.Range;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -244,6 +245,9 @@ public class SimpleTest {
         Node matchNode = newNode.getMatch("A");
         assert matchNode != null;
         assert matchNode.text().equals("a");
+        Range range=matchNode.range();
+        assert range.getStart().getLine()==1;
+        assert range.getStart().getColumn()==6;
     }
 
     @Test
@@ -261,7 +265,12 @@ public class SimpleTest {
         Node newNode = root.find(findArgument);
         assert newNode != null;
         List<Node> matchNode = newNode.getMultipleMatches("STMT");
+        rule.setPattern("let a = 123");
+        findArgument.setRule(rule);
+        Node newNode1 = root.find(findArgument);
+        assert newNode1 != null;
         assert matchNode != null;
         assert matchNode.size() == 3;
+        assert matchNode.get(0).equals(newNode1);
     }
 }

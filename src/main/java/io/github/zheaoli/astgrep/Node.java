@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Rule;
+import io.github.zheaoli.astgrep.position.Range;
 import io.questdb.jar.jni.JarJniLoader;
 
 import java.lang.reflect.Array;
@@ -87,6 +88,59 @@ public class Node extends NativeObject {
         return getTransformed(nativeHandle, meta);
     }
 
+    public Root getRoot() {
+        return getRoot(nativeHandle);
+    }
+
+    public List<Node> findAll(Core core) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String coreJson = objectMapper.writeValueAsString(core);
+        return Arrays.asList(findAll(nativeHandle, coreJson));
+    }
+
+    public Node field(String name) {
+        return field(nativeHandle, name);
+    }
+
+    public Node parent() {
+        return parent(nativeHandle);
+    }
+
+    public Node child(long nth) {
+        return child(nativeHandle, nth);
+    }
+
+    public List<Node> ancestors() {
+        return Arrays.asList(ancestors(nativeHandle));
+    }
+
+    public List<Node> children() {
+        return Arrays.asList(children(nativeHandle));
+    }
+
+    public Node next() {
+        return next(nativeHandle);
+    }
+
+    public List<Node> nextAll() {
+        return Arrays.asList(nextAll(nativeHandle));
+    }
+
+    public Node prev() {
+        return prev(nativeHandle);
+    }
+
+    public List<Node> prevAll() {
+        return Arrays.asList(prevAll(nativeHandle));
+    }
+
+    public Range range() {
+        return range(nativeHandle);
+    }
+    public boolean equals(Node other) {
+        return equal(nativeHandle, other.getNativeHandle());
+    }
+
 
     @Override
     protected native void disposeInternal(long handle);
@@ -112,11 +166,38 @@ public class Node extends NativeObject {
 
     protected static native boolean follows(long handle, String rule);
 
-    protected static native Node find(long handle, String core);
-
     protected static native Node getMatch(long handle, String meta);
 
     protected static native Node[] getMultipleMatches(long handle, String meta);
 
     protected static native String getTransformed(long handle, String meta);
+
+    protected static native Root getRoot(long handle);
+
+    protected static native Node find(long handle, String core);
+
+    protected static native Node[] findAll(long handle, String core);
+
+    protected static native Node field(long handle,String name);
+
+    protected static native Node parent(long handle);
+
+    protected static native Node child(long handle, long nth);
+
+    protected static native Node[] ancestors(long handle);
+
+    protected static native Node[] children(long handle);
+
+    protected static native Node next(long handle);
+
+    protected static native Node[] nextAll(long handle);
+
+    protected static native Node prev(long handle);
+
+    protected static native Node[] prevAll(long handle);
+
+    protected static native Range range(long handle);
+
+    protected static native boolean equal(long handle, long otherHandle);
+
 }

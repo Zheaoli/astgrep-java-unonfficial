@@ -77,7 +77,7 @@ pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Root_root(
 }
 
 #[no_mangle]
-pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Root_print(
+pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Root_filename(
     mut env: JNIEnv,
     _: JClass,
     root: *mut Root,

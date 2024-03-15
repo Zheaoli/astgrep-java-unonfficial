@@ -14,13 +14,17 @@ public class Root extends NativeObject {
         return new Root(nativeHandle);
     }
 
+    public static Root of(long nativeHandle) {
+        return new Root(nativeHandle);
+    }
+
 
     private Root(long nativeHandle) {
         super(nativeHandle);
     }
 
-    public String print() {
-        return print(nativeHandle);
+    public String filename() {
+        return filename(nativeHandle);
     }
 
     public Node root() {
@@ -32,7 +36,7 @@ public class Root extends NativeObject {
 
     protected static native long constructor(String sourceCode, String language);
 
-    protected static native String print(long handle);
+    protected static native String filename(long handle);
 
     protected static native Node root(long handle);
 
