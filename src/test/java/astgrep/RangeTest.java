@@ -6,9 +6,23 @@ import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Rule;
 import io.github.zheaoli.astgrep.position.Pos;
 import io.github.zheaoli.astgrep.position.Range;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RangeTest {
+
+    private Node root;
+
+    @BeforeAll
+    public void initTestInstance() throws Exception {
+        String sourceCode = "function test() {\n" +
+                "  let a = 123\n" +
+                "}";
+        root = Root.of(sourceCode, "javascript").root();
+        assert root != null;
+    }
 
     @Test
     public void testPos() throws Exception {
@@ -36,10 +50,6 @@ public class RangeTest {
     }
     @Test
     public void testRange() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
         Core core = new Core();

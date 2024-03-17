@@ -6,21 +6,32 @@ import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Rule;
 
 import io.github.zheaoli.astgrep.position.Range;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.List;
 import java.util.Objects;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimpleTest {
-    @Test
-    public void testIsLeaf() throws Exception {
+
+    private Node root;
+
+    @BeforeAll
+    public void initTestInstance() throws Exception {
         String sourceCode = "function test() {\n" +
                 "  let a = 123\n" +
                 "  let b = 456\n" +
                 "  let c = 789\n" +
                 "}";
-        Node root = Root.of(sourceCode, "javascript").root();
+        root = Root.of(sourceCode, "javascript").root();
         assert root != null;
+    }
+
+
+    @Test
+    public void testIsLeaf() throws Exception {
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -38,12 +49,6 @@ public class SimpleTest {
 
     @Test
     public void testMatches() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -67,12 +72,6 @@ public class SimpleTest {
 
     @Test
     public void testIsNamed() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -90,12 +89,6 @@ public class SimpleTest {
 
     @Test
     public void testKind() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -113,12 +106,6 @@ public class SimpleTest {
 
     @Test
     public void testText() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -136,12 +123,6 @@ public class SimpleTest {
 
     @Test
     public void testInside() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -158,12 +139,6 @@ public class SimpleTest {
 
     @Test
     public void testHas() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
@@ -183,12 +158,6 @@ public class SimpleTest {
 
     @Test
     public void testPrecedes() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B\n");
@@ -208,12 +177,6 @@ public class SimpleTest {
 
     @Test
     public void testFollows() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let b = 456\n");
@@ -230,12 +193,6 @@ public class SimpleTest {
 
     @Test
     public void testGetMatch() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B\n");
@@ -252,12 +209,6 @@ public class SimpleTest {
 
     @Test
     public void testGetMultiMatch() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Core findArgument = new Core();
         Rule rule = new Rule();
         rule.setPattern("function test() { $$$STMT }");

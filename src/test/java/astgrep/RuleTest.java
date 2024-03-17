@@ -5,17 +5,26 @@ import io.github.zheaoli.astgrep.Root;
 import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Relation;
 import io.github.zheaoli.astgrep.arguments.Rule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.HashMap;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RuleTest {
-    @Test
-    public void testSimple() throws Exception {
+    private Node root;
+
+    @BeforeAll
+    public void initTestInstance() throws Exception {
         String sourceCode = "function test() {\n" +
                 "  let a = 123\n" +
                 "}";
-        Node root = Root.of(sourceCode, "javascript").root();
+        root = Root.of(sourceCode, "javascript").root();
+        assert root != null;
+    }
+    @Test
+    public void testSimple() throws Exception {
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
         Core core = new Core();
@@ -26,10 +35,6 @@ public class RuleTest {
 
     @Test
     public void testNotRule() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
         Rule notRule = new Rule();
@@ -46,10 +51,6 @@ public class RuleTest {
 
     @Test
     public void testRelationRule() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
         Rule relationRule = new Rule();
@@ -66,10 +67,6 @@ public class RuleTest {
 
     @Test
     public void testComplexConfig() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
         rule.setRegex("123");
@@ -91,10 +88,6 @@ public class RuleTest {
 
     @Test
     public void testComplexConfigNotFound() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
         Rule rule = new Rule();
         rule.setPattern("let $A = $B");
         rule.setRegex("123");
