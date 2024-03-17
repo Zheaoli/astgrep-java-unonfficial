@@ -4,22 +4,32 @@ import io.github.zheaoli.astgrep.Node;
 import io.github.zheaoli.astgrep.Root;
 import io.github.zheaoli.astgrep.arguments.Core;
 import io.github.zheaoli.astgrep.arguments.Rule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TraversalTest {
-    @Test
-    public void testGetRoot() throws Exception {
+
+    private Node root;
+
+    @BeforeAll
+    public void initTestInstance() throws Exception {
         String sourceCode = "function test() {\n" +
                 "  let a = 123\n" +
                 "  let b = 456\n" +
                 "  let c = 789\n" +
                 "}";
-        Node root = Root.of(sourceCode, "javascript").root();
+        root = Root.of(sourceCode, "javascript").root();
         assert root != null;
+    }
+
+    @Test
+    public void testGetRoot() throws Exception {
+
         Root newRoot = root.getRoot();
         assert newRoot != null;
         assert newRoot.filename().equals("anonymous");
@@ -27,13 +37,6 @@ public class TraversalTest {
 
     @Test
     public void testFindAll() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setPattern("let $N = $V");
         Core core = new Core();
@@ -56,13 +59,6 @@ public class TraversalTest {
 
     @Test
     public void testField() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setKind("variable_declarator");
         Core core = new Core();
@@ -77,13 +73,6 @@ public class TraversalTest {
 
     @Test
     public void testParent() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setKind("variable_declarator");
         Core core = new Core();
@@ -98,13 +87,6 @@ public class TraversalTest {
 
     @Test
     public void testChild() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setKind("variable_declarator");
         Core core = new Core();
@@ -118,13 +100,6 @@ public class TraversalTest {
 
     @Test
     public void testChildren() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setKind("variable_declarator");
         Core core = new Core();
@@ -139,14 +114,7 @@ public class TraversalTest {
     }
 
     @Test
-    public void testAncestors() throws Exception{
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
+    public void testAncestors() throws Exception {
         Rule rule = new Rule();
         rule.setKind("variable_declarator");
         Core core = new Core();
@@ -159,14 +127,7 @@ public class TraversalTest {
     }
 
     @Test
-    public void testNext() throws Exception{
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
+    public void testNext() throws Exception {
         Rule rule = new Rule();
         rule.setPattern("let a = $A\n");
         Core core = new Core();
@@ -177,40 +138,26 @@ public class TraversalTest {
         assert neighbor != null;
         assert neighbor.text().equals("let b = 456");
         rule.setPattern("let c = $A\n");
-        Node node2= root.find(core);
-        assert node2.next().next()==null;
+        Node node2 = root.find(core);
+        assert node2.next().next() == null;
     }
 
     @Test
     public void testNextAll() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setPattern("let a = $A\n");
         Core core = new Core();
         core.setRule(rule);
         Node node = root.find(core);
         assert node != null;
-        List<Node> nextAll= node.nextAll();
-        assert nextAll.size()==3;
-        assert nextAll.get(0).nextAll().size()==2;
+        List<Node> nextAll = node.nextAll();
+        assert nextAll.size() == 3;
+        assert nextAll.get(0).nextAll().size() == 2;
         assert nextAll.get(2).nextAll().isEmpty();
     }
 
     @Test
-    public void testPrev() throws Exception{
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
+    public void testPrev() throws Exception {
         Rule rule = new Rule();
         rule.setPattern("let c = $A\n");
         Core core = new Core();
@@ -221,28 +168,21 @@ public class TraversalTest {
         assert neighbor != null;
         assert neighbor.text().equals("let b = 456");
         rule.setPattern("let a = $A\n");
-        Node node2= root.find(core);
-        assert node2.prev().prev()==null;
+        Node node2 = root.find(core);
+        assert node2.prev().prev() == null;
     }
 
     @Test
     public void testPrevAll() throws Exception {
-        String sourceCode = "function test() {\n" +
-                "  let a = 123\n" +
-                "  let b = 456\n" +
-                "  let c = 789\n" +
-                "}";
-        Node root = Root.of(sourceCode, "javascript").root();
-        assert root != null;
         Rule rule = new Rule();
         rule.setPattern("let c = $A\n");
         Core core = new Core();
         core.setRule(rule);
         Node node = root.find(core);
         assert node != null;
-        List<Node> prevAll= node.prevAll();
-        assert prevAll.size()==3;
-        assert prevAll.get(0).prevAll().size()==2;
+        List<Node> prevAll = node.prevAll();
+        assert prevAll.size() == 3;
+        assert prevAll.get(0).prevAll().size() == 2;
         assert prevAll.get(2).prevAll().isEmpty();
     }
 }
