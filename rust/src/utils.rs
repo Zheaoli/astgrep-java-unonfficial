@@ -1,15 +1,7 @@
-use jni::objects::JByteArray;
-use jni::objects::JClass;
+use jni::errors::Error;
+use jni::JNIEnv;
 use jni::objects::JObject;
 use jni::objects::JString;
-use jni::objects::JValue;
-use jni::objects::JValueOwned;
-use jni::sys::jlong;
-use jni::sys::jobject;
-use jni::sys::jsize;
-use jni::JNIEnv;
-
-use jni::errors::Error;
 
 pub(crate) fn jstring_to_string(env: &mut JNIEnv, s: &JString) -> Result<String, Error> {
     let res = env.get_string(s)?;
