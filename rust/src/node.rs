@@ -1,22 +1,17 @@
 use anyhow::Error;
-use ast_grep_config::from_str;
 use ast_grep_config::{DeserializeEnv, RuleCore, SerializableRule, SerializableRuleCore};
 use ast_grep_core::{NodeMatch, StrDoc};
 use ast_grep_language::SupportLang;
-
-use jni::objects::JByteArray;
+use jni::JNIEnv;
 use jni::objects::JClass;
 use jni::objects::JObject;
 use jni::objects::JString;
 use jni::objects::JValue;
-use jni::objects::JValueOwned;
 use jni::sys::jboolean;
 use jni::sys::jlong;
 use jni::sys::jobject;
 use jni::sys::jobjectArray;
 use jni::sys::jsize;
-use jni::sys::jstring;
-use jni::JNIEnv;
 
 use super::utils;
 
@@ -578,7 +573,6 @@ pub unsafe extern "system" fn Java_io_github_zheaoli_astgrep_Node_prev(
     mut env: JNIEnv,
     _: JClass,
     node: *mut Node,
-    nth: jlong,
 ) -> jobject {
     let node = &mut *node;
     let result = node.inner.prev().map(|inner| Node {
